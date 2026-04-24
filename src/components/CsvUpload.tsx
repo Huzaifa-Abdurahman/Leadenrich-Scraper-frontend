@@ -158,9 +158,6 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
                {isVerified ? <CheckCircle2 size={12} className="text-emerald-400" /> : <Mail size={12} className="text-cyan-500" />} 
                {isVerified ? "Access Authorized" : isCodeSent ? "Verification Required" : "Unlock Free Extraction"}
             </label>
-            <Link href="/admin" className="text-[9px] font-bold text-slate-600 hover:text-cyan-400 transition-colors uppercase tracking-widest">
-               Admin Login
-            </Link>
          </div>
          
          {!isVerified ? (

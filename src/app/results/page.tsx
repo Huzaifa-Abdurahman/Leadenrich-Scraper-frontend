@@ -8,6 +8,54 @@ import {
 } from 'lucide-react';
 import LeadTable from '@/components/LeadTable';
 
+function CtaModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center px-6">
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md animate-appear" onClick={onClose} />
+      <div className="relative glass-panel p-10 md:p-16 rounded-[3rem] border-white/10 max-w-xl w-full text-center space-y-8 animate-appear-slow shadow-[0_0_100px_rgba(14,165,233,0.15)]">
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 bg-gradient-to-br from-cyan-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl">
+           <Zap size={32} className="text-white fill-white" />
+        </div>
+        
+        <div className="space-y-4">
+           <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter leading-tight">
+             Need Custom <br />
+             <span className="text-cyan-400">Software Solutions?</span>
+           </h2>
+           <p className="text-slate-400 font-light leading-relaxed">
+             Our team at <span className="text-white font-bold">Galaxy Software Hub</span> specializes in building world-class Agentic AI systems, SaaS platforms, and enterprise-grade automation.
+           </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+           <a 
+             href="https://wa.me/923100043155" 
+             target="_blank"
+             className="flex-1 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-black uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg shadow-emerald-500/20"
+           >
+             <Phone size={16} /> WhatsApp Us
+           </a>
+           <a 
+             href="mailto:huzabdur@gmail.com" 
+             className="flex-1 px-8 py-4 bg-white hover:bg-slate-100 text-black text-xs font-black uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-3"
+           >
+             <Mail size={16} /> Send Email
+           </a>
+        </div>
+
+        <button 
+          onClick={onClose}
+          className="text-[10px] uppercase font-black tracking-widest text-slate-600 hover:text-white transition-colors"
+        >
+          Maybe Later
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ResultsContent() {
   const searchParams = useSearchParams();
   const jobId = searchParams.get('jobId');
@@ -15,6 +63,7 @@ function ResultsContent() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCtaOpen, setIsCtaOpen] = useState(false);
 
   // Use internal proxy to bypass browser extension interference
   const API_URL = '/api/proxy';
@@ -23,6 +72,7 @@ function ResultsContent() {
     if (!jobId) return;
 
     let pollInterval: NodeJS.Timeout;
+    let ctaTimeout: NodeJS.Timeout;
 
     const fetchData = async () => {
       try {
@@ -32,7 +82,6 @@ function ResultsContent() {
         });
         
         if (!res.ok) {
-           // If it's a transient 404/500, log and retry instead of crashing
            const errMsg = `Backend returned status ${res.status}`;
            console.warn(`🔄 ${errMsg}... Retrying...`);
            setError(errMsg);
@@ -42,7 +91,6 @@ function ResultsContent() {
 
         const json = await res.json();
         
-        // Validate response structure
         if (!json || typeof json !== 'object') {
           setError('Invalid response from backend');
           setLoading(false);
@@ -52,27 +100,30 @@ function ResultsContent() {
         setData(json);
         setError(null);
         
-        // STOP POLLING if the job is finalized
         if (json.status === 'completed' || json.status === 'failed') {
           console.log("✅ Extraction Complete. Stopping live sync.");
           clearInterval(pollInterval);
+          
+          // Trigger CTA after 20 seconds of showing results
+          ctaTimeout = setTimeout(() => {
+            setIsCtaOpen(true);
+          }, 20000);
         }
       } catch (err: any) {
         console.error('❌ Sync interrupted:', err);
         setError(`Connection error: ${err.message}`);
       } finally {
-        // Only stop initial loading if we actually have data or an error
         setLoading(false);
       }
     };
 
-    // Initial fetch
     fetchData();
-
-    // Start smart polling (Check every 2.5s for real-time vibe)
     pollInterval = setInterval(fetchData, 2500);
 
-    return () => clearInterval(pollInterval);
+    return () => {
+      clearInterval(pollInterval);
+      clearTimeout(ctaTimeout);
+    };
   }, [jobId, API_URL]);
 
   // IMPROVED: Only show dashboard when we have actual results or the job is done
@@ -128,6 +179,7 @@ function ResultsContent() {
 
   return (
     <div className="min-h-screen pb-20 bg-[#030303] text-white" suppressHydrationWarning>
+      <CtaModal isOpen={isCtaOpen} onClose={() => setIsCtaOpen(false)} />
 
       {/* ── MODERN HEADER ────────────────────────── */}
       <header className="sticky top-0 z-[100] px-6 py-5" suppressHydrationWarning>
