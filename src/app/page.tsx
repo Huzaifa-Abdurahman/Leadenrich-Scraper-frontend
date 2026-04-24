@@ -40,9 +40,9 @@ export default function Home() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Features</a>
-            <a href="#upload" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Extraction</a>
-            <Link href="/docs" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Docs</Link>
+            <a href="#features" className="text-sm font-medium text-slate-200 hover:text-white transition-colors">Features</a>
+            <a href="#upload" className="text-sm font-medium text-slate-200 hover:text-white transition-colors">Extraction</a>
+            <Link href="/docs" className="text-sm font-medium text-slate-200 hover:text-white transition-colors">Docs</Link>
             {jobId && (
               <Link href={`/results?jobId=${jobId}`} className="text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-2">
                 <LayoutGrid size={14} /> Active Results
@@ -51,7 +51,7 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-4">
-             <a href="https://github.com" target="_blank" className="p-2 text-slate-400 hover:text-white transition-colors hidden sm:block">
+             <a href="https://github.com" target="_blank" className="p-2 text-slate-300 hover:text-white transition-colors hidden sm:block">
                <Github size={20} />
              </a>
              <a href="#upload" className="btn-primary !py-2 !px-6 !rounded-full !text-xs !font-black uppercase tracking-widest">
@@ -80,7 +80,7 @@ export default function Home() {
                     Scale your outreach with <br />
                     <span className="text-cyan-400">Validated Intelligence.</span>
                   </h2>
-                  <p className="max-w-xl mx-auto text-lg text-slate-400 font-light leading-relaxed">
+                  <p className="max-w-xl mx-auto text-lg text-slate-300 font-light leading-relaxed">
                     Paste your target domains or upload a bulk CSV. Our V2 engine maps 
                     site structures and extracts contacts in real-time.
                   </p>
@@ -99,21 +99,21 @@ export default function Home() {
                         <Terminal size={24} />
                       </div>
                       <h4 className="text-white font-bold">Selenium Engine V2</h4>
-                      <p className="text-sm text-slate-500 leading-relaxed font-light">Deep site-wide mapping and neural extraction for 99% accuracy.</p>
+                       <p className="text-sm text-slate-300 leading-relaxed font-light">Deep site-wide mapping and neural extraction for 99% accuracy.</p>
                    </div>
                    <div className="space-y-4">
                       <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto text-emerald-500">
                         <Zap size={24} />
                       </div>
                       <h4 className="text-white font-bold">Instant Parallelism</h4>
-                      <p className="text-sm text-slate-500 leading-relaxed font-light">Process hundreds of domains simultaneously with multi-page crawling.</p>
+                      <p className="text-sm text-slate-300 leading-relaxed font-light">Process hundreds of domains simultaneously with multi-page crawling.</p>
                    </div>
                    <div className="space-y-4">
                       <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto text-orange-500">
                         <Sparkles size={24} />
                       </div>
                       <h4 className="text-white font-bold">Neural Extraction</h4>
-                      <p className="text-sm text-slate-500 leading-relaxed font-light">AI-powered contact discovery and validation for high-quality leads.</p>
+                      <p className="text-sm text-slate-300 leading-relaxed font-light">AI-powered contact discovery and validation for high-quality leads.</p>
                    </div>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function Home() {
                 ) : (
                   <button 
                     onClick={() => setJobId(null)} 
-                    className="text-[10px] uppercase font-black tracking-widest text-white/20 hover:text-white/60 transition-colors"
+                    className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-white/80 transition-colors"
                   >
                     Abort Operation & Reset
                   </button>
@@ -175,22 +175,22 @@ export default function Home() {
               </div>
               <span className="font-black text-xl tracking-tighter text-white">LEADENRICH</span>
             </div>
-            <p className="text-sm text-slate-500 max-w-xs leading-relaxed font-light">
+            <p className="text-sm text-slate-300 max-w-xs leading-relaxed font-light">
               Enterprise-grade B2B enrichment engine. Reforming the way sales teams 
               extract and validate commercial intelligence.
             </p>
           </div>
           <div className="space-y-4">
              <h4 className="text-xs font-black text-white uppercase tracking-widest">Protocol</h4>
-             <ul className="space-y-2 text-sm text-slate-500 font-light">
+             <ul className="space-y-2 text-sm text-slate-300 font-light">
                <li className="hover:text-cyan-400 cursor-pointer transition-colors">Extraction V2</li>
                <li className="hover:text-cyan-400 cursor-pointer transition-colors">Neural Mapping</li>
                <li className="hover:text-cyan-400 cursor-pointer transition-colors">Schema Validation</li>
              </ul>
           </div>
           <div className="space-y-4 text-right md:text-left">
-             <p className="text-[10px] text-slate-600 uppercase tracking-[0.25em] font-black">Powered BY</p>
-             <p className="text-xs text-white/40">Selenium Agentic Engine <br /> FastAPI Core</p>
+             <p className="text-[10px] text-slate-400 uppercase tracking-[0.25em] font-black">Powered BY</p>
+             <p className="text-xs text-white/60">Selenium Agentic Engine <br /> FastAPI Core</p>
           </div>
         </div>
       </footer>

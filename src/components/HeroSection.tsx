@@ -40,7 +40,7 @@ function FeatureItem({ title, desc, icon: Icon }: { title: string; desc: string;
       </div>
       <div className="space-y-1" suppressHydrationWarning>
         <h4 className="text-white font-bold">{title}</h4>
-        <p className="text-sm text-slate-500 font-light leading-relaxed">{desc}</p>
+        <p className="text-sm text-slate-300 font-light leading-relaxed">{desc}</p>
       </div>
     </div>
   )
@@ -69,7 +69,7 @@ export default function HeroSection() {
             </span>
           </h1>
 
-          <p className="text-xl text-slate-400 font-light leading-relaxed max-w-xl">
+          <p className="text-xl text-slate-300 font-light leading-relaxed max-w-xl">
             Transform raw company URLs into deep, validated contact intelligence. 
             Automate discovery, extraction, and validation in a single neural pipeline.
           </p>
@@ -78,7 +78,7 @@ export default function HeroSection() {
             <a href="#upload" className="btn-primary !px-8 !py-4 !text-lg !rounded-full flex items-center gap-3">
               Start Extraction <ArrowRight size={20} />
             </a>
-            <div className="flex items-center gap-3 text-sm text-slate-500">
+            <div className="flex items-center gap-3 text-sm text-slate-300">
               <CheckCircle2 size={18} className="text-emerald-500" /> No API key req. for Demo
             </div>
           </div>
@@ -86,15 +86,15 @@ export default function HeroSection() {
           <div className="grid grid-cols-3 gap-8 pt-10 border-t border-white/5">
             <div>
               <div className="text-3xl font-black text-white"><Counter end={99} suffix="%" /></div>
-              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-1">Accuracy</p>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-1">Accuracy</p>
             </div>
             <div>
               <div className="text-3xl font-black text-white"><Counter end={100} suffix="k+" /></div>
-              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-1">Domains Proxied</p>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-1">Domains Proxied</p>
             </div>
             <div>
               <div className="text-3xl font-black text-white"><Counter end={450} suffix="ms" /></div>
-              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-1">Latency</p>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-1">Latency</p>
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function HeroSection() {
               </div>
 
               <div className="p-6 bg-black/40 rounded-3xl border border-white/5 border-dashed">
-                 <p className="text-xs text-slate-500 leading-relaxed italic">
+                 <p className="text-xs text-slate-300 leading-relaxed italic">
                    "The engine automatically navigated to /about and /careers, identified the CEO 
                    and Head of Talent, and recovered 3 validated work emails in 4.2 seconds."
                  </p>

@@ -77,12 +77,12 @@ export default function AdminPage() {
                 <Shield size={40} />
              </div>
              <h1 className="text-3xl font-black text-white tracking-tighter">Admin Portal</h1>
-             <p className="text-slate-500 font-light">Enter credentials to manage access protocols.</p>
+             <p className="text-slate-300 font-light">Enter credentials to manage access protocols.</p>
           </div>
 
           <form onSubmit={handleLogin} className="glass-panel p-8 rounded-[2rem] border-white/5 space-y-6">
              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Username</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username</label>
                 <input 
                   type="text" 
                   value={username}
@@ -92,7 +92,7 @@ export default function AdminPage() {
                 />
              </div>
              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Password</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
                 <input 
                   type="password" 
                   value={password}
@@ -113,7 +113,7 @@ export default function AdminPage() {
           </form>
           
           <div className="text-center">
-            <Link href="/" className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-cyan-400 transition-colors flex items-center justify-center gap-2">
+            <Link href="/" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-cyan-400 transition-colors flex items-center justify-center gap-2">
                <ArrowLeft size={12} /> Back to Terminal
             </Link>
           </div>
@@ -132,7 +132,7 @@ export default function AdminPage() {
               </div>
               <div>
                  <h1 className="text-3xl font-black tracking-tighter">Key Management</h1>
-                 <p className="text-slate-500 text-sm font-light uppercase tracking-widest">Protocol: Tester Access Tokens</p>
+                 <p className="text-slate-400 text-sm font-light uppercase tracking-widest">Protocol: Tester Access Tokens</p>
               </div>
            </div>
            <button 
@@ -147,21 +147,21 @@ export default function AdminPage() {
         <div className="grid gap-4">
            {keys.length === 0 ? (
              <div className="glass-panel p-20 rounded-[2.5rem] border-dashed border-white/5 text-center space-y-4">
-                <Zap size={48} className="mx-auto text-slate-800" />
-                <p className="text-slate-600 font-light italic">No active access protocols generated yet.</p>
+                <Zap size={48} className="mx-auto text-slate-600" />
+                <p className="text-slate-400 font-light italic">No active access protocols generated yet.</p>
              </div>
            ) : (
              keys.map((k, i) => (
                <div key={i} className="glass-panel p-6 rounded-3xl border-white/5 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
                   <div className="flex items-center gap-8">
                      <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Key Hash</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Key Hash</span>
                         <code className="text-xl font-mono text-cyan-400 bg-cyan-500/5 px-4 py-1 rounded-lg border border-cyan-500/10 tracking-widest">
                            {k.key}
                         </code>
                      </div>
                      <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Allocation</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Allocation</span>
                         <div className="flex items-center gap-2">
                            <div className="h-1.5 w-24 bg-white/5 rounded-full overflow-hidden">
                               <div 
@@ -176,8 +176,8 @@ export default function AdminPage() {
                   
                   <div className="flex items-center gap-6">
                      <div className="text-right">
-                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest block mb-1">Issued At</span>
-                        <span className="text-xs text-slate-400 font-light">{new Date(k.created_at).toLocaleString()}</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Issued At</span>
+                        <span className="text-xs text-slate-300 font-light">{new Date(k.created_at).toLocaleString()}</span>
                      </div>
                      <div className={`p-2 rounded-lg ${k.uses_left > 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
                         {k.uses_left > 0 ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
@@ -189,7 +189,7 @@ export default function AdminPage() {
         </div>
         
         <div className="pt-10 border-t border-white/5 text-center">
-           <Link href="/" className="text-xs font-black uppercase tracking-widest text-slate-600 hover:text-white transition-colors">
+           <Link href="/" className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors">
               Exit Admin Session
            </Link>
         </div>

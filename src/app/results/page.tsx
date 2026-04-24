@@ -24,7 +24,7 @@ function CtaModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
              Need Custom <br />
              <span className="text-cyan-400">Software Solutions?</span>
            </h2>
-           <p className="text-slate-400 font-light leading-relaxed">
+           <p className="text-slate-200 font-light leading-relaxed">
              Our team at <span className="text-white font-bold">Galaxy Software Hub</span> specializes in building world-class Agentic AI systems, SaaS platforms, and enterprise-grade automation.
            </p>
         </div>
@@ -39,7 +39,7 @@ function CtaModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
            </a>
            <a 
              href="mailto:huzabdur@gmail.com" 
-             className="flex-1 px-8 py-4 bg-white hover:bg-slate-100 text-black text-xs font-black uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-3"
+             className="flex-1 px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-black uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-3"
            >
              <Mail size={16} /> Send Email
            </a>
@@ -47,7 +47,7 @@ function CtaModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
 
         <button 
           onClick={onClose}
-          className="text-[10px] uppercase font-black tracking-widest text-slate-600 hover:text-white transition-colors"
+          className="text-[10px] uppercase font-black tracking-widest text-slate-400 hover:text-white transition-colors"
         >
           Maybe Later
         </button>
@@ -141,7 +141,7 @@ function ResultsContent() {
             {isInitialProcessing ? 'Deploying Neural Workers...' : 'Synchronizing Intelligence...'}
           </p>
           {isInitialProcessing && (
-            <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Mapping domain structures in real-time</p>
+            <p className="text-[9px] text-slate-300 uppercase tracking-widest font-bold">Mapping domain structures in real-time</p>
           )}
         </div>
       </div>
@@ -158,7 +158,7 @@ function ResultsContent() {
           </div>
           <div className="space-y-2">
             <h2 className="text-2xl font-black text-white tracking-tight">Connectivity Lost</h2>
-            <p className="text-sm text-slate-500 font-light leading-relaxed">
+            <p className="text-sm text-slate-300 font-light leading-relaxed">
               The intelligence hub is currently unreachable. Ensure the FastAPI backend is running on port 8000.
             </p>
             <p className="text-[10px] font-mono p-2 bg-black/40 rounded-lg text-red-400 mt-4">
@@ -186,7 +186,7 @@ function ResultsContent() {
         <div className="max-w-7xl mx-auto glass-panel rounded-full px-8 py-3 flex items-center justify-between border border-white/10 shadow-2xl">
           <div className="flex items-center gap-4">
             <Link href="/" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
-              <ArrowLeft size={18} className="text-slate-400" />
+              <ArrowLeft size={18} className="text-slate-300" />
             </Link>
             <div className="hidden sm:block">
               <h1 className="text-xs font-black text-white uppercase tracking-widest">Intelligence Report</h1>
@@ -225,7 +225,7 @@ function ResultsContent() {
            <div className="mb-6 flex items-center gap-3">
               <Terminal size={18} className="text-cyan-500" />
               <h2 className="text-lg font-bold text-white tracking-tight">Harvested Leads</h2>
-              <div className="ml-auto flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold text-slate-500">
+              <div className="ml-auto flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold text-slate-300">
                  {results.length} ENTRIES FOUND
               </div>
            </div>
@@ -243,7 +243,7 @@ function StatWidget({ icon: Icon, title, value, color }: any) {
         <Icon size={24} />
       </div>
       <div>
-        <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{title}</div>
+        <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{title}</div>
         <div className="text-2xl font-black text-white tracking-tighter leading-none">{value}</div>
       </div>
     </div>

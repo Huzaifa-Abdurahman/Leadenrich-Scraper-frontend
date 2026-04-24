@@ -65,7 +65,7 @@ export default function LeadTable({ leads }: LeadTableProps) {
                 <div className={`text-3xl font-black ${lead.confidence === 'high' ? 'text-emerald-400' : 'text-cyan-400'}`}>
                   {lead.score}%
                 </div>
-                <div className="text-[9px] uppercase font-bold text-slate-400 tracking-widest mt-1">Accuracy</div>
+                <div className="text-[9px] uppercase font-bold text-slate-300 tracking-widest mt-1">Accuracy</div>
               </div>
               
               <div className="flex-1 min-w-0">
@@ -85,7 +85,7 @@ export default function LeadTable({ leads }: LeadTableProps) {
                 </div>
               </div>
 
-              <ChevronDown className={`ml-auto text-slate-600 transition-transform ${expandedIdx === idx ? 'rotate-180 text-cyan-400' : ''}`} size={28} />
+              <ChevronDown className={`ml-auto text-slate-400 transition-transform ${expandedIdx === idx ? 'rotate-180 text-cyan-400' : ''}`} size={28} />
             </button>
 
             {expandedIdx === idx && (
@@ -98,13 +98,13 @@ export default function LeadTable({ leads }: LeadTableProps) {
                       {lead.emails?.map((e, i) => (
                         <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 group">
                           <span className="text-sm font-light text-slate-100">{e}</span>
-                          <Mail size={14} className="text-slate-600 group-hover:text-cyan-400" />
+                          <Mail size={14} className="text-slate-400 group-hover:text-cyan-400" />
                         </div>
                       ))}
                       {lead.phones?.map((p, i) => (
                         <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 group">
                           <span className="text-sm font-light text-slate-100">{p}</span>
-                          <Phone size={14} className="text-slate-600 group-hover:text-cyan-400" />
+                          <Phone size={14} className="text-slate-400 group-hover:text-cyan-400" />
                         </div>
                       ))}
                     </div>
@@ -132,7 +132,7 @@ export default function LeadTable({ leads }: LeadTableProps) {
                           <div className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">{r.title}</div>
                           {r.email && <div className="text-xs text-slate-400 font-light mt-2">{r.email}</div>}
                         </div>
-                      )) || <div className="text-xs text-slate-600 italic">No representative records.</div>}
+                      )) || <div className="text-xs text-slate-400 italic">No representative records.</div>}
                     </div>
                   </div>
                   
@@ -151,10 +151,10 @@ export default function LeadTable({ leads }: LeadTableProps) {
                 <div className="md:col-span-4 border-l border-white/5 pl-12 space-y-6">
                   <div className="space-y-4">
                     <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Data Context</h4>
-                    <pre className="text-[11px] text-slate-400 leading-relaxed font-mono whitespace-pre-wrap bg-black/40 p-5 rounded-2xl border border-white/5 border-dashed overflow-hidden">
+                    <pre className="text-[11px] text-slate-300 leading-relaxed font-mono whitespace-pre-wrap bg-black/40 p-5 rounded-2xl border border-white/5 border-dashed overflow-hidden">
                       {lead.description || "Extraction completed via Firecrawl V2 Neural Engine. Result reconciled from multiple sources."}
                     </pre>
-                    <div className="flex items-center gap-3 text-slate-500 p-2">
+                    <div className="flex items-center gap-3 text-slate-400 p-2">
                       <ShieldCheck size={16} className="text-emerald-500" />
                       <span className="text-[10px] font-light uppercase tracking-widest">Verified Official Source</span>
                     </div>

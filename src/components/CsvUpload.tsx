@@ -154,7 +154,7 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
       {/* ── LEAD CAPTURE / VERIFICATION SECTION ───────────────────────── */}
       <div className="max-w-md mx-auto space-y-4">
          <div className="flex items-center justify-between px-1">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+            <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
                {isVerified ? <CheckCircle2 size={12} className="text-emerald-400" /> : <Mail size={12} className="text-cyan-500" />} 
                {isVerified ? "Access Authorized" : isCodeSent ? "Verification Required" : "Unlock Free Extraction"}
             </label>
@@ -177,14 +177,14 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
                 <button 
                   onClick={isCodeSent ? handleVerifyCode : handleRequestCode}
                   disabled={isVerifying || (isCodeSent ? !verificationCode : !email)}
-                  className="px-6 bg-cyan-500 hover:bg-cyan-400 disabled:bg-white/5 disabled:text-slate-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                  className="px-6 bg-cyan-500 hover:bg-cyan-400 disabled:bg-white/5 disabled:text-slate-400 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
                 >
                   {isVerifying ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} fill="currentColor" />}
                   {isCodeSent ? "Verify" : "Get Code"}
                 </button>
              </div>
              {isCodeSent && (
-               <p className="text-[9px] text-center text-slate-500 uppercase tracking-widest font-bold">
+               <p className="text-[9px] text-center text-slate-300 uppercase tracking-widest font-bold">
                  Check your inbox for the access code.
                </p>
              )}
@@ -212,12 +212,12 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
 
       {!isVerified ? (
         <div className="glass-panel p-16 rounded-[2.5rem] border-white/5 text-center space-y-6 animate-appear">
-           <div className="w-20 h-20 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto text-slate-700">
+           <div className="w-20 h-20 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto text-slate-500">
               <Shield size={40} />
            </div>
            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-slate-400 tracking-tight">Lead Capture Active</h3>
-              <p className="text-xs text-slate-600 font-light uppercase tracking-widest">Verify your email to unlock the neural extraction engine.</p>
+              <h3 className="text-xl font-bold text-slate-300 tracking-tight">Lead Capture Active</h3>
+              <p className="text-xs text-slate-400 font-light uppercase tracking-widest">Verify your email to unlock the neural extraction engine.</p>
            </div>
         </div>
       ) : (
@@ -228,7 +228,7 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
               <button
                 onClick={() => setTab('csv')}
                 className={`flex items-center gap-2 px-8 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all ${
-                  tab === 'csv' ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20' : 'text-slate-400 hover:text-white'
+                  tab === 'csv' ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20' : 'text-slate-300 hover:text-white'
                 }`}
               >
                 <FileSpreadsheet size={16} /> Batch Upload
@@ -236,7 +236,7 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
               <button
                 onClick={() => setTab('manual')}
                 className={`flex items-center gap-2 px-8 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all ${
-                  tab === 'manual' ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20' : 'text-slate-400 hover:text-white'
+                  tab === 'manual' ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20' : 'text-slate-300 hover:text-white'
                 }`}
               >
                 <Type size={16} /> Direct Input
@@ -275,7 +275,7 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
                       <h3 className="text-xl font-bold text-white tracking-tight">
                         {stage === 'submitting' ? 'Uploading Pipeline...' : 'Upload Lead CSV'}
                       </h3>
-                      <p className="text-sm text-slate-500 font-light italic">Supports up to 10 domains per protocol session</p>
+                      <p className="text-sm text-slate-400 font-light italic">Supports up to 10 domains per protocol session</p>
                     </div>
                   </div>
                 </label>
@@ -327,7 +327,7 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
            </div>
            <div>
              <h4 className="text-sm font-bold text-white mb-1">Selenium Engine V2</h4>
-             <p className="text-xs text-slate-500 leading-relaxed font-light italic">Agentic AI-driven deep site reconnaissance.</p>
+             <p className="text-xs text-slate-400 leading-relaxed font-light italic">Agentic AI-driven deep site reconnaissance.</p>
            </div>
         </div>
         <div className="glass-card p-6 flex gap-4 items-start rounded-[1.5rem] border border-white/5">
@@ -336,17 +336,16 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
            </div>
            <div>
              <h4 className="text-sm font-bold text-white mb-1">Parallel Clusters</h4>
-             <p className="text-xs text-slate-500 leading-relaxed font-light italic">Concurrent domain processing for high-volume batches.</p>
+             <p className="text-xs text-slate-400 leading-relaxed font-light italic">Concurrent domain processing for high-volume batches.</p>
            </div>
         </div>
       </div>
 
       <div className="text-center pt-4">
-         <Link href="/docs" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 hover:text-cyan-400 transition-colors">
+         <Link href="/docs" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-cyan-400 transition-colors">
             System Documentation & Architecture
          </Link>
       </div>
     </div>
   );
-}
 
