@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
-  ArrowLeft, Download, Users, Zap, Globe, AlertCircle, Loader2, FileText, Terminal
+  ArrowLeft, Download, Users, Zap, Globe, AlertCircle, Loader2, FileText, Terminal, Phone, Mail
 } from 'lucide-react';
 import LeadTable from '@/components/LeadTable';
 
