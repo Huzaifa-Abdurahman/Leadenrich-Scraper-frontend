@@ -42,6 +42,7 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Features</a>
             <a href="#upload" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Extraction</a>
+            <Link href="/docs" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Docs</Link>
             {jobId && (
               <Link href={`/results?jobId=${jobId}`} className="text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-2">
                 <LayoutGrid size={14} /> Active Results
@@ -97,7 +98,7 @@ export default function Home() {
                       <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto text-cyan-500">
                         <Terminal size={24} />
                       </div>
-                      <h4 className="text-white font-bold">Firecrawl V2</h4>
+                      <h4 className="text-white font-bold">Selenium Engine V2</h4>
                       <p className="text-sm text-slate-500 leading-relaxed font-light">Deep site-wide mapping and neural extraction for 99% accuracy.</p>
                    </div>
                    <div className="space-y-4">
@@ -189,7 +190,7 @@ export default function Home() {
           </div>
           <div className="space-y-4 text-right md:text-left">
              <p className="text-[10px] text-slate-600 uppercase tracking-[0.25em] font-black">Powered BY</p>
-             <p className="text-xs text-white/40">Firecrawl Neural Scraper <br /> FastAPI Core</p>
+             <p className="text-xs text-white/40">Selenium Agentic Engine <br /> FastAPI Core</p>
           </div>
         </div>
       </footer>

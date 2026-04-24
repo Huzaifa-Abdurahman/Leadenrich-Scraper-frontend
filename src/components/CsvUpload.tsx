@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import {
   AlertCircle, CheckCircle2, FileSpreadsheet,
-  X, Loader2, CloudUpload, Type, LayoutGrid, Zap, Sparkles, Key, Shield
+  X, Loader2, CloudUpload, Type, LayoutGrid, Zap, Sparkles, Key, Shield, Mail
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,7 +20,12 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
   const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
   const [manualText, setManualText] = useState('');
+  
+  const [email, setEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [accessKey, setAccessKey] = useState('');
+  
+  const [isCodeSent, setIsCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [usesLeft, setUsesLeft] = useState<number | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -28,22 +33,49 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
 
   const API_URL = '/api/proxy';
 
-  const handleVerifyKey = async () => {
-    if (!accessKey) return;
+  const handleRequestCode = async () => {
+    if (!email || !email.includes('@')) {
+      setError('Please enter a valid email address');
+      return;
+    }
     setIsVerifying(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/verify-key`, {
+      const res = await fetch(`${API_URL}/request-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: accessKey }),
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsCodeSent(true);
+      } else {
+        setError(data.message || 'Failed to send code');
+      }
+    } catch (err) {
+      setError('Connection failed');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode) return;
+    setIsVerifying(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_URL}/verify-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: verificationCode }),
       });
       const data = await res.json();
       if (data.success) {
         setIsVerified(true);
+        setAccessKey(data.key);
         setUsesLeft(data.uses_left);
       } else {
-        setError(data.message || 'Invalid Protocol Key');
+        setError(data.message || 'Invalid Verification Code');
       }
     } catch (err) {
       setError('Connection failed');
@@ -119,55 +151,65 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
   return (
     <div id="upload" className="max-w-2xl mx-auto space-y-8" suppressHydrationWarning>
       
-      {/* ── ACCESS KEY INPUT SECTION ───────────────────────── */}
+      {/* ── LEAD CAPTURE / VERIFICATION SECTION ───────────────────────── */}
       <div className="max-w-md mx-auto space-y-4">
          <div className="flex items-center justify-between px-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-               <Key size={12} className={isVerified ? "text-emerald-400" : "text-cyan-500"} /> 
-               {isVerified ? "Access Authorized" : "Protocol Access Key"}
+               {isVerified ? <CheckCircle2 size={12} className="text-emerald-400" /> : <Mail size={12} className="text-cyan-500" />} 
+               {isVerified ? "Access Authorized" : isCodeSent ? "Verification Required" : "Unlock Free Extraction"}
             </label>
             <Link href="/admin" className="text-[9px] font-bold text-slate-600 hover:text-cyan-400 transition-colors uppercase tracking-widest">
                Admin Login
             </Link>
          </div>
          
-         <div className="flex gap-3">
-            <div className="relative flex-1 group">
-               <div className={`absolute -inset-0.5 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity ${isVerified ? 'bg-emerald-500/20' : 'bg-cyan-500/20'}`} />
-               <input 
-                  type="text"
-                  value={accessKey}
-                  onChange={(e) => {
-                    setAccessKey(e.target.value.toUpperCase());
-                    if (isVerified) setIsVerified(false);
-                  }}
-                  disabled={isVerifying}
-                  placeholder="ENTER 8-DIGIT PROTOCOL KEY"
-                  className={`relative w-full bg-black/60 border rounded-xl py-4 px-6 text-center text-sm font-mono tracking-[0.3em] outline-none transition-all uppercase ${
-                    isVerified ? 'border-emerald-500/40 text-emerald-400' : 'border-white/10 text-cyan-400 focus:border-cyan-500/40'
-                  }`}
-               />
-            </div>
-            {!isVerified && (
-               <button 
-                 onClick={handleVerifyKey}
-                 disabled={!accessKey || isVerifying}
-                 className="px-6 bg-cyan-500 hover:bg-cyan-400 disabled:bg-white/5 disabled:text-slate-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
-               >
-                 {isVerifying ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} fill="currentColor" />}
-                 Authorize
-               </button>
-            )}
-         </div>
-
-         {isVerified && usesLeft !== null && (
-            <div className="flex items-center justify-center gap-4 animate-appear">
-               <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-emerald-500/20" />
-               <span className="text-[10px] font-black text-emerald-500/60 uppercase tracking-[0.2em]">
-                 Verification Success • {usesLeft} Protocol Runs Remaining
-               </span>
-               <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-emerald-500/20" />
-            </div>
+         {!isVerified ? (
+           <div className="space-y-3">
+             <div className="flex gap-3">
+                <div className="relative flex-1 group">
+                   <div className="absolute -inset-0.5 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity bg-cyan-500/20" />
+                   <input 
+                      type={isCodeSent ? "text" : "email"}
+                      value={isCodeSent ? verificationCode : email}
+                      onChange={(e) => isCodeSent ? setVerificationCode(e.target.value.toUpperCase()) : setEmail(e.target.value)}
+                      disabled={isVerifying}
+                      placeholder={isCodeSent ? "ENTER 6-DIGIT CODE" : "YOUR EMAIL ADDRESS"}
+                      className="relative w-full bg-black/60 border border-white/10 rounded-xl py-4 px-6 text-center text-sm font-mono tracking-[0.1em] outline-none transition-all focus:border-cyan-500/40"
+                   />
+                </div>
+                <button 
+                  onClick={isCodeSent ? handleVerifyCode : handleRequestCode}
+                  disabled={isVerifying || (isCodeSent ? !verificationCode : !email)}
+                  className="px-6 bg-cyan-500 hover:bg-cyan-400 disabled:bg-white/5 disabled:text-slate-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                >
+                  {isVerifying ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} fill="currentColor" />}
+                  {isCodeSent ? "Verify" : "Get Code"}
+                </button>
+             </div>
+             {isCodeSent && (
+               <p className="text-[9px] text-center text-slate-500 uppercase tracking-widest font-bold">
+                 Check your inbox for the access code.
+               </p>
+             )}
+           </div>
+         ) : (
+           <div className="animate-appear">
+             <div className="relative group">
+                <div className="absolute -inset-0.5 rounded-xl blur opacity-100 transition-opacity bg-emerald-500/20" />
+                <div className="relative w-full bg-black/60 border border-emerald-500/40 rounded-xl py-4 px-6 text-center text-sm font-mono tracking-[0.3em] text-emerald-400">
+                  {accessKey}
+                </div>
+             </div>
+             {usesLeft !== null && (
+                <div className="mt-4 flex items-center justify-center gap-4">
+                   <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-emerald-500/20" />
+                   <span className="text-[10px] font-black text-emerald-500/60 uppercase tracking-[0.2em]">
+                     {usesLeft} Credits Remaining
+                   </span>
+                   <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-emerald-500/20" />
+                </div>
+             )}
+           </div>
          )}
       </div>
 
@@ -177,8 +219,8 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
               <Shield size={40} />
            </div>
            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-slate-400 tracking-tight">System Locked</h3>
-              <p className="text-xs text-slate-600 font-light uppercase tracking-widest">Please authorize your protocol key to unlock extraction modules.</p>
+              <h3 className="text-xl font-bold text-slate-400 tracking-tight">Lead Capture Active</h3>
+              <p className="text-xs text-slate-600 font-light uppercase tracking-widest">Verify your email to unlock the neural extraction engine.</p>
            </div>
         </div>
       ) : (
@@ -287,8 +329,8 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
              <Sparkles size={20} />
            </div>
            <div>
-             <h4 className="text-sm font-bold text-white mb-1">Firecrawl V2</h4>
-             <p className="text-xs text-slate-500 leading-relaxed font-light italic">Real-time sitemap parsing for contact extraction.</p>
+             <h4 className="text-sm font-bold text-white mb-1">Selenium Engine V2</h4>
+             <p className="text-xs text-slate-500 leading-relaxed font-light italic">Agentic AI-driven deep site reconnaissance.</p>
            </div>
         </div>
         <div className="glass-card p-6 flex gap-4 items-start rounded-[1.5rem] border border-white/5">
@@ -300,6 +342,12 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
              <p className="text-xs text-slate-500 leading-relaxed font-light italic">Concurrent domain processing for high-volume batches.</p>
            </div>
         </div>
+      </div>
+
+      <div className="text-center pt-4">
+         <Link href="/docs" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 hover:text-cyan-400 transition-colors">
+            System Documentation & Architecture
+         </Link>
       </div>
     </div>
   );
