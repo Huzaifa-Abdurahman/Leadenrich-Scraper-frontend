@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
-  Key, Shield, LogIn, Plus, RefreshCw, 
-  CheckCircle2, AlertCircle, Trash2, Zap, ArrowLeft 
+  Key, Shield, LogIn, RefreshCw, 
+  CheckCircle2, AlertCircle, Zap, ArrowLeft 
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,7 +12,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [keys, setKeys] = useState<any[]>([]);
+  const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const API_URL = '/api/proxy';
@@ -29,42 +29,24 @@ export default function AdminPage() {
       });
       if (res.ok) {
         setIsLoggedIn(true);
-        fetchKeys();
+        fetchSessions();
       } else {
         setError('Invalid credentials');
       }
-    } catch (err) {
+    } catch {
       setError('Connection error');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchKeys = async () => {
+  const fetchSessions = async () => {
     try {
-      const res = await fetch(`${API_URL}/admin/keys`);
+      const res = await fetch(`${API_URL}/admin/sessions`);
       const data = await res.json();
-      setKeys(data);
+      setSessions(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
-    }
-  };
-
-  const generateKey = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/admin/generate-key`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      if (res.ok) {
-        fetchKeys();
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -77,7 +59,7 @@ export default function AdminPage() {
                 <Shield size={40} />
              </div>
              <h1 className="text-3xl font-black text-white tracking-tighter">Admin Portal</h1>
-             <p className="text-slate-300 font-light">Enter credentials to manage access protocols.</p>
+             <p className="text-slate-300 font-light">Enter credentials to view browser sessions.</p>
           </div>
 
           <form onSubmit={handleLogin} className="glass-panel p-8 rounded-[2rem] border-white/5 space-y-6">
@@ -131,33 +113,33 @@ export default function AdminPage() {
                  <Key size={24} />
               </div>
               <div>
-                 <h1 className="text-3xl font-black tracking-tighter">Key Management</h1>
-                 <p className="text-slate-400 text-sm font-light uppercase tracking-widest">Protocol: Tester Access Tokens</p>
+                 <h1 className="text-3xl font-black tracking-tighter">Browser Sessions</h1>
+                 <p className="text-slate-400 text-sm font-light uppercase tracking-widest">Protocol: 3 scrapes per browser</p>
               </div>
            </div>
            <button 
-             onClick={generateKey}
+             onClick={fetchSessions}
              disabled={loading}
              className="btn-primary !px-8 !py-3 !rounded-full flex items-center gap-2"
            >
-             <Plus size={18} /> Generate Protocol Key
+             <RefreshCw size={18} /> Refresh
            </button>
         </div>
 
         <div className="grid gap-4">
-           {keys.length === 0 ? (
+           {sessions.length === 0 ? (
              <div className="glass-panel p-20 rounded-[2.5rem] border-dashed border-white/5 text-center space-y-4">
                 <Zap size={48} className="mx-auto text-slate-600" />
-                <p className="text-slate-400 font-light italic">No active access protocols generated yet.</p>
+                <p className="text-slate-400 font-light italic">No browser sessions yet.</p>
              </div>
            ) : (
-             keys.map((k, i) => (
+             sessions.map((s, i) => (
                <div key={i} className="glass-panel p-6 rounded-3xl border-white/5 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
                   <div className="flex items-center gap-8">
                      <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Key Hash</span>
-                        <code className="text-xl font-mono text-cyan-400 bg-cyan-500/5 px-4 py-1 rounded-lg border border-cyan-500/10 tracking-widest">
-                           {k.key}
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Session ID</span>
+                        <code className="text-sm font-mono text-cyan-400 bg-cyan-500/5 px-4 py-1 rounded-lg border border-cyan-500/10 tracking-wide">
+                           {s.session_id?.slice(0, 18)}…
                         </code>
                      </div>
                      <div className="flex flex-col">
@@ -166,21 +148,21 @@ export default function AdminPage() {
                            <div className="h-1.5 w-24 bg-white/5 rounded-full overflow-hidden">
                               <div 
                                 className="h-full bg-cyan-500 transition-all duration-1000" 
-                                style={{ width: `${(k.uses_left / 3) * 100}%` }}
+                                style={{ width: `${((s.uses_left || 0) / 3) * 100}%` }}
                               />
                            </div>
-                           <span className="text-xs font-bold text-white">{k.uses_left} / 3 Uses</span>
+                           <span className="text-xs font-bold text-white">{s.uses_left} / 3 Uses</span>
                         </div>
                      </div>
                   </div>
                   
                   <div className="flex items-center gap-6">
                      <div className="text-right">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Issued At</span>
-                        <span className="text-xs text-slate-300 font-light">{new Date(k.created_at).toLocaleString()}</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Created</span>
+                        <span className="text-xs text-slate-300 font-light">{new Date(s.created_at).toLocaleString()}</span>
                      </div>
-                     <div className={`p-2 rounded-lg ${k.uses_left > 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
-                        {k.uses_left > 0 ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
+                     <div className={`p-2 rounded-lg ${s.uses_left > 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                        {s.uses_left > 0 ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                      </div>
                   </div>
                </div>

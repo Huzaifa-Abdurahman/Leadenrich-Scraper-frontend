@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AlertCircle, CheckCircle2, FileSpreadsheet,
-  X, Loader2, CloudUpload, Type, LayoutGrid, Zap, Sparkles, Key, Shield, Mail
+  X, Loader2, CloudUpload, Type, LayoutGrid, Zap, Sparkles, Shield
 } from 'lucide-react';
 import Link from 'next/link';
-
 
 interface CsvUploadProps {
   onJobCreated: (jobId: string) => void;
@@ -15,93 +14,78 @@ interface CsvUploadProps {
 type Tab = 'csv' | 'manual';
 type Stage = 'idle' | 'submitting' | 'done' | 'error';
 
+const SESSION_KEY = 'leadenrich_session_id';
+
 export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
   const [tab, setTab] = useState<Tab>('csv');
   const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
   const [manualText, setManualText] = useState('');
-  
-  const [email, setEmail] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [accessKey, setAccessKey] = useState('');
-  
-  const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [usesLeft, setUsesLeft] = useState<number | null>(null);
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [loadingSession, setLoadingSession] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
 
   const API_URL = '/api/proxy';
 
-  const handleRequestCode = async () => {
-    if (!email || !email.includes('@')) {
-      setError('Please enter a valid email address');
-      return;
-    }
-    setIsVerifying(true);
-    setError(null);
-    try {
-      const res = await fetch(`${API_URL}/request-code`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setIsCodeSent(true);
-      } else {
-        setError(data.message || 'Failed to send code');
-      }
-    } catch (err) {
-      setError('Connection failed');
-    } finally {
-      setIsVerifying(false);
-    }
-  };
+  const sessionHeaders = (sid: string) => ({
+    'X-Session-Id': sid,
+  });
 
-  const handleVerifyCode = async () => {
-    if (!verificationCode) return;
-    setIsVerifying(true);
-    setError(null);
-    try {
-      const res = await fetch(`${API_URL}/verify-code`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code: verificationCode }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setIsVerified(true);
-        setAccessKey(data.key);
-        setUsesLeft(data.uses_left);
-      } else {
-        setError(data.message || 'Invalid Verification Code');
+  useEffect(() => {
+    const initSession = async () => {
+      setLoadingSession(true);
+      setError(null);
+      try {
+        const stored = typeof window !== 'undefined'
+          ? localStorage.getItem(SESSION_KEY)
+          : null;
+
+        const res = await fetch(`${API_URL}/session`, {
+          headers: stored ? sessionHeaders(stored) : {},
+        });
+        const data = await res.json();
+        if (data.success && data.session_id) {
+          localStorage.setItem(SESSION_KEY, data.session_id);
+          setSessionId(data.session_id);
+          setUsesLeft(data.uses_left);
+        } else {
+          setError('Could not start browser session');
+        }
+      } catch {
+        setError('Connection failed');
+      } finally {
+        setLoadingSession(false);
       }
-    } catch (err) {
-      setError('Connection failed');
-    } finally {
-      setIsVerifying(false);
-    }
-  };
+    };
+    initSession();
+  }, []);
+
+  const canScrape = Boolean(sessionId && usesLeft !== null && usesLeft > 0);
 
   const handleCsvSubmit = async (file: File) => {
-    if (!isVerified) return;
+    if (!sessionId || !canScrape) return;
     if (!file.name.endsWith('.csv')) {
       setError('Please upload a .csv file');
       return;
     }
 
     setStage('submitting');
+    setError(null);
     try {
       const form = new FormData();
       form.append('file', file);
-      const res = await fetch(`${API_URL}/upload?access_key=${accessKey}`, {
+      const res = await fetch(`${API_URL}/upload`, {
         method: 'POST',
+        headers: sessionHeaders(sessionId),
         body: form,
       });
-      if (res.status === 401) throw new Error('Invalid or Expired Access Key');
-      if (!res.ok) throw new Error('Upload failed');
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        throw new Error(data.detail || 'Scraping limit reached for this browser (3 free scrapes).');
+      }
+      if (!res.ok) throw new Error(data.detail || 'Upload failed');
+      if (typeof data.uses_left === 'number') setUsesLeft(data.uses_left);
       setStage('done');
       setTimeout(() => onJobCreated(data.job_id), 800);
     } catch (err: any) {
@@ -111,7 +95,7 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
   };
 
   const handleManualSubmit = async () => {
-    if (!isVerified) return;
+    if (!sessionId || !canScrape) return;
     const domains = manualText.split('\n').map(d => d.trim()).filter(d => d.length > 0);
     if (domains.length === 0) {
       setError('Please enter at least one domain');
@@ -123,15 +107,22 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
     }
 
     setStage('submitting');
+    setError(null);
     try {
       const res = await fetch(`${API_URL}/manual`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ domains, access_key: accessKey }),
+        headers: {
+          'Content-Type': 'application/json',
+          ...sessionHeaders(sessionId),
+        },
+        body: JSON.stringify({ domains }),
       });
-      if (res.status === 401) throw new Error('Invalid or Expired Access Key');
-      if (!res.ok) throw new Error('Submission failed');
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        throw new Error(data.detail || 'Scraping limit reached for this browser (3 free scrapes).');
+      }
+      if (!res.ok) throw new Error(data.detail || 'Submission failed');
+      if (typeof data.uses_left === 'number') setUsesLeft(data.uses_left);
       setStage('done');
       setTimeout(() => onJobCreated(data.job_id), 1200);
     } catch (err: any) {
@@ -142,87 +133,63 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    if (!isVerified) return;
+    if (!canScrape) return;
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (file) handleCsvSubmit(file);
   };
 
+  if (loadingSession) {
+    return (
+      <div id="upload" className="max-w-2xl mx-auto space-y-8" suppressHydrationWarning>
+        <div className="glass-panel p-16 rounded-[2.5rem] border-white/5 text-center space-y-6">
+          <Loader2 size={40} className="animate-spin mx-auto text-cyan-400" />
+          <p className="text-xs text-slate-400 font-light uppercase tracking-widest">
+            Preparing browser session...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div id="upload" className="max-w-2xl mx-auto space-y-8" suppressHydrationWarning>
-      
-      {/* ── LEAD CAPTURE / VERIFICATION SECTION ───────────────────────── */}
+      {/* Session quota */}
       <div className="max-w-md mx-auto space-y-4">
-         <div className="flex items-center justify-between px-1">
-            <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
-               {isVerified ? <CheckCircle2 size={12} className="text-emerald-400" /> : <Mail size={12} className="text-cyan-500" />} 
-               {isVerified ? "Access Authorized" : isCodeSent ? "Verification Required" : "Unlock Free Extraction"}
-            </label>
-         </div>
-         
-         {!isVerified ? (
-           <div className="space-y-3">
-             <div className="flex gap-3">
-                <div className="relative flex-1 group">
-                   <div className="absolute -inset-0.5 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity bg-cyan-500/20" />
-                   <input 
-                      type={isCodeSent ? "text" : "email"}
-                      value={isCodeSent ? verificationCode : email}
-                      onChange={(e) => isCodeSent ? setVerificationCode(e.target.value.toUpperCase()) : setEmail(e.target.value)}
-                      disabled={isVerifying}
-                      placeholder={isCodeSent ? "ENTER 6-DIGIT CODE" : "YOUR EMAIL ADDRESS"}
-                      className="relative w-full bg-black/60 border border-white/10 rounded-xl py-4 px-6 text-center text-sm font-mono tracking-[0.1em] outline-none transition-all focus:border-cyan-500/40"
-                   />
-                </div>
-                <button 
-                  onClick={isCodeSent ? handleVerifyCode : handleRequestCode}
-                  disabled={isVerifying || (isCodeSent ? !verificationCode : !email)}
-                  className="px-6 bg-cyan-500 hover:bg-cyan-400 disabled:bg-white/5 disabled:text-slate-400 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
-                >
-                  {isVerifying ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} fill="currentColor" />}
-                  {isCodeSent ? "Verify" : "Get Code"}
-                </button>
-             </div>
-             {isCodeSent && (
-               <p className="text-[9px] text-center text-slate-300 uppercase tracking-widest font-bold">
-                 Check your inbox for the access code.
-               </p>
-             )}
-           </div>
-         ) : (
-           <div className="animate-appear">
-             <div className="relative group">
-                <div className="absolute -inset-0.5 rounded-xl blur opacity-100 transition-opacity bg-emerald-500/20" />
-                <div className="relative w-full bg-black/60 border border-emerald-500/40 rounded-xl py-4 px-6 text-center text-sm font-mono tracking-[0.3em] text-emerald-400">
-                  {accessKey}
-                </div>
-             </div>
-             {usesLeft !== null && (
-                <div className="mt-4 flex items-center justify-center gap-4">
-                   <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-emerald-500/20" />
-                   <span className="text-[10px] font-black text-emerald-500/60 uppercase tracking-[0.2em]">
-                     {usesLeft} Credits Remaining
-                   </span>
-                   <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-emerald-500/20" />
-                </div>
-             )}
-           </div>
-         )}
+        <div className="flex items-center justify-between px-1">
+          <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
+            {canScrape
+              ? <CheckCircle2 size={12} className="text-emerald-400" />
+              : <Shield size={12} className="text-amber-400" />}
+            {canScrape ? 'Browser Session Active' : 'Session Limit Reached'}
+          </label>
+        </div>
+
+        <div className="relative group">
+          <div className={`absolute -inset-0.5 rounded-xl blur opacity-100 transition-opacity ${canScrape ? 'bg-emerald-500/20' : 'bg-amber-500/20'}`} />
+          <div className={`relative w-full bg-black/60 border rounded-xl py-4 px-6 text-center text-sm font-mono tracking-[0.2em] ${canScrape ? 'border-emerald-500/40 text-emerald-400' : 'border-amber-500/40 text-amber-400'}`}>
+            {usesLeft ?? 0} / 3 FREE SCRAPES LEFT
+          </div>
+        </div>
+        <p className="text-[9px] text-center text-slate-400 uppercase tracking-widest font-bold">
+          Limit applies to this browser session only.
+        </p>
       </div>
 
-      {!isVerified ? (
+      {!canScrape ? (
         <div className="glass-panel p-16 rounded-[2.5rem] border-white/5 text-center space-y-6 animate-appear">
-           <div className="w-20 h-20 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto text-slate-500">
-              <Shield size={40} />
-           </div>
-           <div className="space-y-2">
-              <h3 className="text-xl font-bold text-slate-300 tracking-tight">Lead Capture Active</h3>
-              <p className="text-xs text-slate-400 font-light uppercase tracking-widest">Verify your email to unlock the neural extraction engine.</p>
-           </div>
+          <div className="w-20 h-20 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto text-slate-500">
+            <Shield size={40} />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold text-slate-300 tracking-tight">Free Limit Reached</h3>
+            <p className="text-xs text-slate-400 font-light uppercase tracking-widest">
+              This browser has used all 3 free scrapes. Contact us at +923100043155 (WhatsApp) for more.
+            </p>
+          </div>
         </div>
       ) : (
         <div className="space-y-8 animate-appear">
-          {/* ── TAB SELECTOR ───────────────────────── */}
           <div className="flex justify-center">
             <div className="p-1.5 bg-white/5 rounded-full border border-white/10 flex gap-2 backdrop-blur-xl shadow-2xl">
               <button
@@ -319,34 +286,32 @@ export default function CsvUpload({ onJobCreated }: CsvUploadProps) {
         </div>
       )}
 
-      {/* Feature Grid */}
       <div className="grid sm:grid-cols-2 gap-6">
         <div className="glass-card p-6 flex gap-4 items-start rounded-[1.5rem] border border-white/5">
-           <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 shrink-0">
-             <Sparkles size={20} />
-           </div>
-           <div>
-             <h4 className="text-sm font-bold text-white mb-1">Selenium Engine V2</h4>
-             <p className="text-xs text-slate-400 leading-relaxed font-light italic">Agentic AI-driven deep site reconnaissance.</p>
-           </div>
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 shrink-0">
+            <Sparkles size={20} />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-white mb-1">Selenium Engine V2</h4>
+            <p className="text-xs text-slate-400 leading-relaxed font-light italic">Agentic AI-driven deep site reconnaissance.</p>
+          </div>
         </div>
         <div className="glass-card p-6 flex gap-4 items-start rounded-[1.5rem] border border-white/5">
-           <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0">
-             <LayoutGrid size={20} />
-           </div>
-           <div>
-             <h4 className="text-sm font-bold text-white mb-1">Parallel Clusters</h4>
-             <p className="text-xs text-slate-400 leading-relaxed font-light italic">Concurrent domain processing for high-volume batches.</p>
-           </div>
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0">
+            <LayoutGrid size={20} />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-white mb-1">Parallel Clusters</h4>
+            <p className="text-xs text-slate-400 leading-relaxed font-light italic">Concurrent domain processing for high-volume batches.</p>
+          </div>
         </div>
       </div>
 
       <div className="text-center pt-4">
-         <Link href="/docs" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-cyan-400 transition-colors">
-            System Documentation & Architecture
-         </Link>
+        <Link href="/docs" className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-cyan-400 transition-colors">
+          System Documentation & Architecture
+        </Link>
       </div>
     </div>
   );
 }
-
