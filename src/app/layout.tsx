@@ -1,5 +1,18 @@
 import type { Metadata } from 'next';
+import { Sora, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+
+const display = Sora({
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['500', '600', '700', '800'],
+});
+
+const body = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-body',
+  weight: ['300', '400', '500', '600', '700'],
+});
 
 export const metadata: Metadata = {
   title: 'LeadEnrich — Find company contacts easily',
@@ -16,14 +29,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className={`dark ${display.variable} ${body.variable}`} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body suppressHydrationWarning>
+      <body className="font-sans" suppressHydrationWarning>
         <div className="mesh-bg" suppressHydrationWarning />
         <div className="mesh-dots" suppressHydrationWarning />
         <div style={{ position: 'relative', zIndex: 1 }} suppressHydrationWarning>

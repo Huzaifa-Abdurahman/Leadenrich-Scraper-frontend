@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Zap, Target, Mail, Users,
-  ArrowRight, CheckCircle2, ListOrdered, Upload, Download
+  ArrowRight, CheckCircle2, ListOrdered, Upload, Download, Phone
 } from 'lucide-react';
 
 function Counter({ end, suffix = '' }: { end: number; suffix?: string }) {
@@ -37,7 +37,7 @@ function FeatureItem({ title, desc, icon: Icon }: { title: string; desc: string;
         <Icon size={24} />
       </div>
       <div className="space-y-1" suppressHydrationWarning>
-        <h4 className="text-white font-bold">{title}</h4>
+        <h4 className="text-white font-semibold font-display">{title}</h4>
         <p className="text-sm text-slate-300 font-light leading-relaxed">{desc}</p>
       </div>
     </div>
@@ -54,12 +54,12 @@ export default function HeroSection() {
         <div className="space-y-10 animate-appear">
           <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
             <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-300">
               Free demo · 3 searches included
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter leading-[0.95]">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[0.95] font-display">
             Find company contacts <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-indigo-600">
               in just a few clicks.
@@ -82,15 +82,15 @@ export default function HeroSection() {
 
           <div className="grid grid-cols-3 gap-8 pt-10 border-t border-white/5">
             <div>
-              <div className="text-3xl font-black text-white"><Counter end={99} suffix="%" /></div>
+              <div className="text-3xl font-extrabold text-white font-display"><Counter end={99} suffix="%" /></div>
               <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-1">Data quality</p>
             </div>
             <div>
-              <div className="text-3xl font-black text-white"><Counter end={3} suffix="" /></div>
+              <div className="text-3xl font-extrabold text-white font-display"><Counter end={3} suffix="" /></div>
               <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-1">Free searches</p>
             </div>
             <div>
-              <div className="text-3xl font-black text-white"><Counter end={10} suffix="" /></div>
+              <div className="text-3xl font-extrabold text-white font-display"><Counter end={10} suffix="" /></div>
               <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-1">Sites per search</p>
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function HeroSection() {
                    </div>
                  </div>
                  <div suppressHydrationWarning>
-                   <h3 className="text-2xl font-black text-white tracking-tight">What you get</h3>
+                   <h3 className="text-2xl font-bold text-white tracking-tight font-display">What you get</h3>
                    <p className="text-cyan-400/80 text-xs font-bold uppercase tracking-widest">Emails · Phones · People</p>
                  </div>
               </div>
@@ -134,17 +134,17 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* Step-by-step guide */}
+      {/* Step-by-step guide with visual examples */}
       <section id="how-it-works" className="max-w-7xl mx-auto px-6 pt-28 pb-8">
         <div className="text-center mb-14 space-y-4">
-          <div className="inline-block px-4 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-black tracking-widest">
+          <div className="inline-block px-4 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] uppercase font-bold tracking-widest">
             Simple guide
           </div>
-          <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight font-display">
             How to use LeadEnrich
           </h2>
           <p className="max-w-2xl mx-auto text-slate-300 font-light text-lg">
-            Four easy steps — no technical skills needed.
+            Four easy steps — see what you type, what happens next, and what you get back.
           </p>
         </div>
 
@@ -153,25 +153,29 @@ export default function HeroSection() {
             step="1"
             icon={ListOrdered}
             title="Add websites"
-            desc="Type company website addresses (one per line), or upload a spreadsheet with a website column."
+            desc="Type company websites, one per line — or upload a spreadsheet."
+            preview={<InputPreview />}
           />
           <StepCard
             step="2"
             icon={Zap}
             title="Start the search"
-            desc="Click the start button. We look through each company site for contact details."
+            desc="Click Find contacts. We look through each company site for details."
+            preview={<StartPreview />}
           />
           <StepCard
             step="3"
             icon={Upload}
             title="Wait a moment"
-            desc="You will see progress while we work. Most searches finish in about a minute."
+            desc="Watch the progress bar while we work. Usually under a minute."
+            preview={<ProcessingPreview />}
           />
           <StepCard
             step="4"
             icon={Download}
             title="Download results"
-            desc="Open your results page and download a spreadsheet of emails, phones, and contacts."
+            desc="Get a clean list of emails, phones, and people to export."
+            preview={<OutputPreview />}
           />
         </div>
       </section>
@@ -179,18 +183,100 @@ export default function HeroSection() {
   );
 }
 
-function StepCard({ step, icon: Icon, title, desc }: { step: string; icon: any; title: string; desc: string }) {
+function StepCard({
+  step,
+  icon: Icon,
+  title,
+  desc,
+  preview,
+}: {
+  step: string;
+  icon: any;
+  title: string;
+  desc: string;
+  preview: React.ReactNode;
+}) {
   return (
-    <div className="glass-panel p-8 rounded-[2rem] border-white/5 space-y-5 hover:bg-white/[0.03] transition-colors h-full">
+    <div className="glass-card p-6 rounded-[1.75rem] space-y-5 h-full flex flex-col">
       <div className="flex items-center justify-between">
-        <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-          <Icon size={22} />
+        <div className="w-11 h-11 rounded-2xl bg-cyan-500/15 border border-cyan-400/20 flex items-center justify-center text-cyan-300">
+          <Icon size={20} />
         </div>
-        <span className="text-4xl font-black text-white/10">{step}</span>
+        <span className="text-3xl font-extrabold text-white/15 font-display">{step}</span>
       </div>
+
       <div className="space-y-2">
-        <h3 className="text-lg font-bold text-white">{title}</h3>
-        <p className="text-sm text-slate-300 font-light leading-relaxed">{desc}</p>
+        <h3 className="text-lg font-semibold text-white font-display">{title}</h3>
+        <p className="text-sm text-slate-300/90 font-light leading-relaxed">{desc}</p>
+      </div>
+
+      <div className="mt-auto pt-1">
+        {preview}
+      </div>
+    </div>
+  );
+}
+
+function InputPreview() {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/35 p-3 space-y-2">
+      <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold px-1">Example input</p>
+      <div className="rounded-xl bg-white/[0.04] border border-white/10 p-3 font-mono text-[11px] text-cyan-200/90 leading-6">
+        <div>acme.com</div>
+        <div>brightlabs.io</div>
+        <div>northstar.co</div>
+      </div>
+    </div>
+  );
+}
+
+function StartPreview() {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/35 p-4 flex flex-col items-center gap-3">
+      <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold self-start">Example action</p>
+      <div className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-500 py-2.5 text-center text-xs font-bold text-white shadow-lg shadow-cyan-500/20">
+        Find contacts
+      </div>
+      <p className="text-[10px] text-slate-400">Up to 10 websites per search</p>
+    </div>
+  );
+}
+
+function ProcessingPreview() {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/35 p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold">Processing</p>
+        <span className="text-[10px] text-cyan-300 font-semibold">67%</span>
+      </div>
+      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+        <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500" />
+      </div>
+      <div className="flex items-center gap-2 text-[10px] text-slate-400">
+        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+        Checking acme.com…
+      </div>
+    </div>
+  );
+}
+
+function OutputPreview() {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/35 p-3 space-y-2">
+      <p className="text-[9px] uppercase tracking-widest text-slate-500 font-bold px-1">Example output</p>
+      <div className="rounded-xl bg-white/[0.04] border border-emerald-500/20 p-3 space-y-2">
+        <div className="text-xs font-semibold text-white">Acme Inc.</div>
+        <div className="flex items-center gap-2 text-[10px] text-slate-300">
+          <Mail size={11} className="text-cyan-400" /> hello@acme.com
+        </div>
+        <div className="flex items-center gap-2 text-[10px] text-slate-300">
+          <Phone size={11} className="text-cyan-400" /> +1 555 0100
+        </div>
+        <div className="pt-1">
+          <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">
+            <Download size={10} /> Ready to download
+          </span>
+        </div>
       </div>
     </div>
   );

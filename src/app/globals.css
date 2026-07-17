@@ -28,38 +28,63 @@
     --brand-secondary: 99, 102, 241;
   }
 
-  /* Force dark mode variables even if .dark class is missing, but we added it to html */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
   }
 
   body {
-    background: #030303; /* Hardcoded fallback to ensure no light flashes */
+    background: #030303;
     color: hsl(var(--foreground));
     @apply antialiased;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.05) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+    font-family: var(--font-body), "Plus Jakarta Sans", system-ui, sans-serif;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
     background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display), "Sora", system-ui, sans-serif;
   }
 }
 
 @layer components {
-  /* Glassmorphism System */
   .glass-panel {
-    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)];
+    @apply backdrop-blur-2xl border border-white/15 shadow-[0_8px_40px_0_rgba(0,0,0,0.45)];
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.09) 0%,
+      rgba(255, 255, 255, 0.03) 50%,
+      rgba(14, 165, 233, 0.04) 100%
+    );
   }
 
   .glass-card {
-    @apply bg-white/[0.02] backdrop-blur-md border border-white/[0.05] transition-all duration-300;
+    @apply backdrop-blur-xl border border-white/12 transition-all duration-300;
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   .glass-card:hover {
-    @apply bg-white/[0.04] border-white/10 -translate-y-0.5;
+    @apply border-cyan-400/25 -translate-y-1;
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(14, 165, 233, 0.06) 100%
+    );
+    box-shadow:
+      0 16px 40px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(14, 165, 233, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
-  /* Premium Buttons */
   .btn-primary {
     @apply relative overflow-hidden px-8 py-3.5 rounded-xl font-bold transition-all duration-300 text-white shadow-lg shadow-cyan-500/20;
     background: linear-gradient(135deg, #0ea5e9, #6366f1);
@@ -78,7 +103,6 @@
   }
 }
 
-/* Animations */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -107,12 +131,10 @@
   animation: appear-slow 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-/* Custom Utilities */
 .selection\:bg-cyan-500\/30 ::selection {
   background-color: rgba(6, 182, 212, 0.3);
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -120,9 +142,6 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
 }
