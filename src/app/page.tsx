@@ -33,7 +33,14 @@ export default function Home() {
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-black tracking-tighter leading-none text-white">LEADENRICH</span>
-              <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-cyan-400 mt-0.5">Contact Finder</span>
+              <a
+                href="https://apexaailabs.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[9px] uppercase font-bold tracking-[0.2em] text-cyan-400 mt-0.5 hover:text-cyan-300 transition-colors"
+              >
+                Apexa AI Labs
+              </a>
             </div>
           </Link>
 

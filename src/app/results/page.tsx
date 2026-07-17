@@ -190,7 +190,14 @@ function ResultsContent() {
             </Link>
             <div className="hidden sm:block">
               <h1 className="text-xs font-black text-white uppercase tracking-widest">Your results</h1>
-              <p className="text-[9px] font-mono text-cyan-400">Search ID: {jobId?.slice(0, 12)}</p>
+              <a
+                href="https://apexaailabs.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[9px] uppercase font-bold tracking-[0.2em] text-cyan-400 hover:text-cyan-300 transition-colors"
+              >
+                Apexa AI Labs
+              </a>
             </div>
           </div>
 

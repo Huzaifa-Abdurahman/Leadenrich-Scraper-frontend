@@ -21,7 +21,11 @@ export default function DocsPage() {
             <ArrowLeft size={18} className="text-slate-300 group-hover:-translate-x-1 transition-transform" />
             <span className="text-xs font-bold uppercase tracking-widest">Back to home</span>
           </Link>
-          <div className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500">Technical documentation</div>
+          <div className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500">
+            <a href="https://apexaailabs.com" target="_blank" rel="noreferrer" className="hover:text-cyan-300 transition-colors">
+              Apexa AI Labs
+            </a>
+          </div>
         </div>
       </header>
 
