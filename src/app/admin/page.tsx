@@ -114,7 +114,7 @@ export default function AdminPage() {
               </div>
               <div>
                  <h1 className="text-3xl font-black tracking-tighter">Browser Sessions</h1>
-                 <p className="text-slate-400 text-sm font-light uppercase tracking-widest">Protocol: 3 scrapes per browser</p>
+                 <p className="text-slate-400 text-sm font-light uppercase tracking-widest">Browser sessions · 3 free searches each</p>
               </div>
            </div>
            <button 

@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
-  ArrowLeft, Download, Users, Zap, Globe, AlertCircle, Loader2, FileText, Terminal, Phone, Mail
+  ArrowLeft, Download, Users, Zap, Globe, AlertCircle, Loader2, FileText, Phone, Mail
 } from 'lucide-react';
 import LeadTable from '@/components/LeadTable';
 
@@ -21,11 +21,11 @@ function CtaModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         
         <div className="space-y-4">
            <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter leading-tight">
-             Need Custom <br />
-             <span className="text-cyan-400">Software Solutions?</span>
+             Need help building <br />
+             <span className="text-cyan-400">custom software?</span>
            </h2>
            <p className="text-slate-200 font-light leading-relaxed">
-             Our team at <span className="text-white font-bold">Galaxy Software Hub</span> specializes in building world-class Agentic AI systems, SaaS platforms, and enterprise-grade automation.
+             Our team at <span className="text-white font-bold">Apexa AI Labs</span> builds AI tools, custom software, and automation that help businesses grow.
            </p>
         </div>
 
@@ -138,10 +138,10 @@ function ResultsContent() {
         </div>
         <div className="text-center space-y-2">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-100 animate-pulse">
-            {isInitialProcessing ? 'Deploying Neural Workers...' : 'Synchronizing Intelligence...'}
+            {isInitialProcessing ? 'Searching websites...' : 'Loading your results...'}
           </p>
           {isInitialProcessing && (
-            <p className="text-[9px] text-slate-300 uppercase tracking-widest font-bold">Mapping domain structures in real-time</p>
+            <p className="text-[9px] text-slate-300 uppercase tracking-widest font-bold">Finding emails and contact details</p>
           )}
         </div>
       </div>
@@ -157,12 +157,12 @@ function ResultsContent() {
             <AlertCircle size={40} />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-black text-white tracking-tight">Connectivity Lost</h2>
+            <h2 className="text-2xl font-black text-white tracking-tight">Connection problem</h2>
             <p className="text-sm text-slate-300 font-light leading-relaxed">
-              The intelligence hub is currently unreachable. Ensure the FastAPI backend is running on port 8000.
+              We could not load your results right now. Please refresh the page or try again in a moment.
             </p>
             <p className="text-[10px] font-mono p-2 bg-black/40 rounded-lg text-red-400 mt-4">
-              DEBUG: {error || 'Resource not found in system'}
+              {error || 'Results not found'}
             </p>
           </div>
           <Link href="/" className="btn-primary w-full flex items-center justify-center gap-2">
@@ -189,8 +189,8 @@ function ResultsContent() {
               <ArrowLeft size={18} className="text-slate-300" />
             </Link>
             <div className="hidden sm:block">
-              <h1 className="text-xs font-black text-white uppercase tracking-widest">Intelligence Report</h1>
-              <p className="text-[9px] font-mono text-cyan-400">ID: {jobId?.slice(0, 12)}</p>
+              <h1 className="text-xs font-black text-white uppercase tracking-widest">Your results</h1>
+              <p className="text-[9px] font-mono text-cyan-400">Search ID: {jobId?.slice(0, 12)}</p>
             </div>
           </div>
 
@@ -199,34 +199,32 @@ function ResultsContent() {
               onClick={() => window.location.href = `${API_URL}/download/md/${jobId}`}
               className="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-2 text-slate-300"
             >
-              <FileText size={14} /> Markdown
+              <FileText size={14} /> Download report
             </button>
             <button 
               onClick={() => window.location.href = `${API_URL}/download/csv/${jobId}`}
               className="btn-primary !py-2.5 !px-8 !text-[10px] !rounded-full !font-black uppercase tracking-widest flex items-center gap-2"
             >
-              <Download size={14} /> Full Export
+              <Download size={14} /> Download spreadsheet
             </button>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto py-12 px-6">
-        {/* Statistics Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-appear">
-          <StatWidget icon={Globe} title="Domains" value={data.total} color="text-cyan-400" />
-          <StatWidget icon={Users} title="Success" value={data.completed} color="text-emerald-400" />
-          <StatWidget icon={AlertCircle} title="Failed" value={data.errors} color="text-red-400" />
-          <StatWidget icon={Zap} title="Efficiency" value={`${avgScore}%`} color="text-indigo-400" />
+          <StatWidget icon={Globe} title="Websites" value={data.total} color="text-cyan-400" />
+          <StatWidget icon={Users} title="Found" value={data.completed} color="text-emerald-400" />
+          <StatWidget icon={AlertCircle} title="No data" value={data.errors} color="text-red-400" />
+          <StatWidget icon={Zap} title="Quality" value={`${avgScore}%`} color="text-indigo-400" />
         </div>
 
-        {/* Results Lead Table */}
         <div className="animate-appear-slow">
            <div className="mb-6 flex items-center gap-3">
-              <Terminal size={18} className="text-cyan-500" />
-              <h2 className="text-lg font-bold text-white tracking-tight">Harvested Leads</h2>
+              <Users size={18} className="text-cyan-500" />
+              <h2 className="text-lg font-bold text-white tracking-tight">Contacts found</h2>
               <div className="ml-auto flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold text-slate-300">
-                 {results.length} ENTRIES FOUND
+                 {results.length} COMPANIES
               </div>
            </div>
            <LeadTable leads={results} />

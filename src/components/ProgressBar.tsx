@@ -57,7 +57,7 @@ export default function ProgressBar({ jobId, onProgress, onComplete }: ProgressB
   if (!status) return (
      <div className="flex flex-col items-center gap-4 py-8 animate-pulse">
        <Loader2 className="text-cyan-500 animate-spin" size={32} />
-       <div className="text-xs font-black uppercase tracking-widest text-slate-300">Contacting Backend Clusters...</div>
+       <div className="text-xs font-black uppercase tracking-widest text-slate-300">Starting your search...</div>
      </div>
   );
 
@@ -72,13 +72,13 @@ export default function ProgressBar({ jobId, onProgress, onComplete }: ProgressB
             {progressPercent}%
           </div>
           <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-cyan-400 mt-1">
-            Global Progress
+            Progress
           </div>
         </div>
         <div className="text-right">
           <div className="text-2xl font-bold text-slate-100">{elapsed}s</div>
           <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-slate-300 mt-1 italic">
-            Active Runtime
+            Time elapsed
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@ export default function ProgressBar({ jobId, onProgress, onComplete }: ProgressB
             <div className="text-left">
                <div className="text-xs font-black text-white uppercase tracking-wider">{status.completed + status.errors} / {total}</div>
                <div className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">
-                 {status.errors > 0 ? `${status.completed} Success / ${status.errors} No Data` : 'Domains Processed'}
+                 {status.errors > 0 ? `${status.completed} found / ${status.errors} no data` : 'Websites checked'}
                </div>
             </div>
          </div>
@@ -111,7 +111,7 @@ export default function ProgressBar({ jobId, onProgress, onComplete }: ProgressB
            </div>
            <div className="text-left">
               <div className="text-xs font-black text-white uppercase tracking-wider">{status.results?.length || 0}</div>
-              <div className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Cold Intelligence Found</div>
+              <div className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Companies with contacts</div>
            </div>
         </div>
       </div>

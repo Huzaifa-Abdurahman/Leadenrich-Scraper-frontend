@@ -47,7 +47,7 @@ export default function LeadTable({ leads }: LeadTableProps) {
         <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-cyan-400/40 group-focus-within:text-cyan-400" />
         <input
           type="text"
-          placeholder="Filter extracted intelligence..."
+          placeholder="Search by company or website..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-white/5 border border-white/10 rounded-3xl py-6 pl-16 pr-8 text-slate-100 placeholder:text-white/20 focus:outline-none focus:border-cyan-500/40"
@@ -93,7 +93,7 @@ export default function LeadTable({ leads }: LeadTableProps) {
                 
                 <div className="md:col-span-4 space-y-8">
                   <div className="space-y-4">
-                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Validated Channels</h4>
+                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Emails & phones</h4>
                     <div className="space-y-3">
                       {lead.emails?.map((e, i) => (
                         <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 group">
@@ -111,7 +111,7 @@ export default function LeadTable({ leads }: LeadTableProps) {
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Physical Presence</h4>
+                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Addresses</h4>
                     <div className="space-y-2">
                       {lead.addresses?.map((a, i) => (
                         <div key={i} className="p-4 bg-white/5 rounded-xl text-sm text-slate-300 font-light leading-relaxed border border-white/5">
@@ -124,7 +124,7 @@ export default function LeadTable({ leads }: LeadTableProps) {
 
                 <div className="md:col-span-4 space-y-8">
                   <div className="space-y-4">
-                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Key Representatives</h4>
+                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">People</h4>
                     <div className="space-y-4">
                       {lead.representatives?.map((r, i) => (
                         <div key={i} className="p-5 bg-cyan-500/5 rounded-2xl border border-cyan-500/10">
@@ -132,12 +132,12 @@ export default function LeadTable({ leads }: LeadTableProps) {
                           <div className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">{r.title}</div>
                           {r.email && <div className="text-xs text-slate-400 font-light mt-2">{r.email}</div>}
                         </div>
-                      )) || <div className="text-xs text-slate-400 italic">No representative records.</div>}
+                      )) || <div className="text-xs text-slate-400 italic">No people found.</div>}
                     </div>
                   </div>
                   
                   <div className="space-y-4">
-                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Digital Ecosystem</h4>
+                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Social links</h4>
                     <div className="flex flex-wrap gap-2">
                       {lead.socials?.map((s, i) => (
                         <a key={i} href={s} target="_blank" className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs font-bold text-slate-300 hover:text-cyan-400">
@@ -150,13 +150,13 @@ export default function LeadTable({ leads }: LeadTableProps) {
 
                 <div className="md:col-span-4 border-l border-white/5 pl-12 space-y-6">
                   <div className="space-y-4">
-                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Data Context</h4>
+                    <h4 className="text-[10px] font-black text-cyan-400/60 uppercase tracking-widest">Notes</h4>
                     <pre className="text-[11px] text-slate-300 leading-relaxed font-mono whitespace-pre-wrap bg-black/40 p-5 rounded-2xl border border-white/5 border-dashed overflow-hidden">
-                      {lead.description || "Extraction completed via Firecrawl V2 Neural Engine. Result reconciled from multiple sources."}
+                      {lead.description || "Contact details collected from the company website."}
                     </pre>
                     <div className="flex items-center gap-3 text-slate-400 p-2">
                       <ShieldCheck size={16} className="text-emerald-500" />
-                      <span className="text-[10px] font-light uppercase tracking-widest">Verified Official Source</span>
+                      <span className="text-[10px] font-light uppercase tracking-widest">From public website pages</span>
                     </div>
                   </div>
                 </div>

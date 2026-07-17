@@ -2,14 +2,14 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'LeadEnrich — AI-Powered B2B Intelligence Platform',
+  title: 'LeadEnrich — Find company contacts easily',
   description:
-    'Transform raw company data into deep B2B intelligence. Powered by Firecrawl neural extraction for smarter, faster sales enrichment.',
-  keywords: 'lead enrichment, B2B intelligence, sales intelligence, web scraping, AI leads',
-  authors: [{ name: 'LeadEnrich' }],
+    'Enter company websites and get emails, phone numbers, and key contacts. Simple contact finder by Apexa AI Labs.',
+  keywords: 'lead enrichment, find emails, company contacts, sales leads, contact finder',
+  authors: [{ name: 'Apexa AI Labs' }],
   openGraph: {
-    title: 'LeadEnrich — AI B2B Intelligence',
-    description: 'Enrich leads automatically with AI-powered insights.',
+    title: 'LeadEnrich — Find company contacts',
+    description: 'Find emails and phone numbers from company websites in a few clicks.',
     type: 'website',
   },
 };
